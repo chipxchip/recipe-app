@@ -20,6 +20,12 @@ const RecipeList = (props) => {
             <p>{recipe.ingredients}</p>
             <h3>Instructions</h3>
             <p>{recipe.instructions}</p>
+            <button
+              className="delete-button"
+              onClick={() => props.onDeleteRecipe(recipe.id)}
+            >
+              Delete
+            </button>
           </div>
         </div>
       ))}

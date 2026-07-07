@@ -29,20 +29,39 @@ function App() {
   }, [sendRequest, transformRecipes]);
 
   const addRecipeHandler = async (recipe) => {
+    await sendRequest(
+      {
+        url: FIREBASE_URL,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: recipe,
+      },
+      (data) => {
+        setRecipes((prevRecipes) => [
+          ...prevRecipes,
+          { id: data.name, ...recipe },
+        ]);
+      },
+    );
+  };
+
+  const deleteRecipeHandler = async (id) => {
     await sendRequest({
-      url: FIREBASE_URL,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: recipe,
+      url: `https://recipe-app-98d6d-default-rtdb.firebaseio.com/recipes/${id}.json`,
+      method: "DELETE",
     });
+    setRecipes((prevRecipes) =>
+      prevRecipes.filter((recipe) => recipe.id !== id),
+    );
   };
 
   return (
     <div className="App">
+      <h1 className="app-title">RECIPE CATALOG APP</h1>
       {error && <p>{error}</p>}
       <RecipeForm onAddRecipe={addRecipeHandler} />
       {isLoading && <p>Loading...</p>}
-      <RecipeList recipes={recipes} />
+      <RecipeList recipes={recipes} onDeleteRecipe={deleteRecipeHandler} />
     </div>
   );
 }
